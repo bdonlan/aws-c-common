@@ -42,6 +42,7 @@
 #include <system_info_tests.c>
 #include <task_scheduler_test.c>
 #include <thread_test.c>
+#include <event_test.c>
 
 int main(int argc, char *argv[]) {
 
@@ -189,5 +190,10 @@ int main(int argc, char *argv[]) {
         &test_lru_cache_element_access_members,
         &rw_lock_aquire_release_test,
         &rw_lock_is_actually_rw_lock_test,
-        &rw_lock_many_readers_test, );
+        &rw_lock_many_readers_test, 
+        &test_event_local_noreset,
+        &test_event_local_autoreset,
+        &test_event_pingpong_autoreset,
+        
+        );
 }

@@ -195,6 +195,10 @@ add_test(test_secure_zero ${TEST_BINARY_NAME} test_secure_zero)
 add_test(test_buffer_secure_zero ${TEST_BINARY_NAME} test_buffer_secure_zero)
 add_test(test_buffer_clean_up_secure ${TEST_BINARY_NAME} test_buffer_clean_up_secure)
 
+add_test(test_event_local_noreset ${TEST_BINARY_NAME} test_event_local_noreset)
+add_test(test_event_local_autoreset ${TEST_BINARY_NAME} test_event_local_autoreset)
+add_test(test_event_pingpong_autoreset ${TEST_BINARY_NAME} test_event_pingpong_autoreset)
+
 file(GLOB FUZZ_TESTS "fuzz/*.c")
 aws_add_fuzz_tests("${FUZZ_TESTS}" "")
 
