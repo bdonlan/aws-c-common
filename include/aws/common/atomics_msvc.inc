@@ -65,9 +65,6 @@
  * this use case.
  */
 
-#define AWS_ATOMIC_INT_IMPL_MAX INT64_MAX
-#define AWS_ATOMIC_INT_IMPL_MIN INT64_MIN
-
 #pragma warning(push)
 #pragma warning(disable : 4201) /* nameless union */
 
