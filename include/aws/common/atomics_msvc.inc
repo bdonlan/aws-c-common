@@ -20,6 +20,7 @@
 #include <intrin.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #if !(defined(_M_IX86) || defined(_M_X64))
 #    error Atomics are not currently supported for non-x86 MSVC platforms
@@ -70,20 +71,24 @@
 #pragma warning(push)
 #pragma warning(disable : 4201) /* nameless union */
 
+#ifdef _M_IX86
+#define AWS_INTERLOCKED_INT(x) Interlocked##x
+typedef int aws_atomic_impl_int_t;
+#else
+#define AWS_INTERLOCKED_INT(x) Interlocked##x##64
+typedef int64_t aws_atomic_impl_int_t;
+#endif
+
+
 struct aws_atomic_var {
     union {
-        size_t intval;
+        aws_atomic_impl_int_t intval;
         void *ptrval;
     };
 };
 
 #pragma warning(pop)
 
-#ifdef _M_IX86
-#define AWS_INTERLOCKED_INT(x) Interlocked##x
-#else
-#define AWS_INTERLOCKED_INT(x) Interlocked##x##64
-#endif
 
 static inline void aws_atomic_priv_check_order(enum aws_memory_order order) {
 #ifndef NDEBUG
@@ -109,7 +114,7 @@ enum aws_atomic_mode_priv {
     aws_atomic_priv_load,
     aws_atomic_priv_store,
     aws_atomic_priv_load_store
-}
+};
 
 static inline void aws_atomic_priv_barrier_before(enum aws_memory_order order, enum aws_atomic_mode_priv mode) {
     aws_atomic_priv_check_order(order);
@@ -318,7 +323,7 @@ size_t aws_atomic_fetch_sub_explicit(
     enum aws_memory_order order) {
     aws_atomic_priv_check_order(order);
 
-    return AWS_INTERLOCKED_INT(ExchangeAdd)(&var->intval, -n);
+    return AWS_INTERLOCKED_INT(ExchangeAdd)(&var->intval, -(aws_atomic_impl_int_t)n);
 }
 
 /**
@@ -366,7 +371,7 @@ size_t aws_atomic_fetch_xor_explicit(
  */
 AWS_STATIC_IMPL
 void aws_atomic_thread_fence(enum aws_memory_order order) {
-    volatile size_t x = 0;
+    volatile aws_atomic_impl_int_t x = 0;
     aws_atomic_priv_check_order(order);
 
     /* On x86: A compiler barrier is sufficient for anything short of seq_cst */
