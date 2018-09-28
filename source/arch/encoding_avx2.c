@@ -195,7 +195,7 @@ static inline bool decode(const unsigned char *in, unsigned char *out) {
     uint64_t hi = _mm256_extract_epi64(vec, 2);
     const uint64_t *p_hi = &hi;
 #else
-    const uint64_t *p_hi = &((uint64_t *)&vec)[2];
+    const uint64_t *p_hi = (uint64_t *)&vec + 2;
 #endif
 
     _mm_storeu_si128((__m128i *)out, lo);
